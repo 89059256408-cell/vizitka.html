@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Наталья Воробьева — Инвестброкер</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #f0d080;
+      --gold-dark: #7a5c1e;
+      --bg: #0a0a0a;
+      --card-bg: #111111;
+      --text: #e8e8e8;
+      --muted: #888;
+    }
+
+    @keyframes gradientShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { text-shadow: 0 0 20px rgba(201,168,76,0.4), 0 0 40px rgba(201,168,76,0.2); }
+      50%       { text-shadow: 0 0 30px rgba(201,168,76,0.7), 0 0 60px rgba(201,168,76,0.4), 0 0 80px rgba(201,168,76,0.2); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes lineExpand {
+      from { width: 0; }
+      to   { width: 80px; }
+    }
+
+    @keyframes buttonPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.4); }
+      50%       { box-shadow: 0 0 0 12px rgba(201,168,76,0); }
+    }
+
+    @keyframes particleFloat {
+      0%   { transform: translateY(0px) rotate(0deg); opacity: 0.6; }
+      50%  { opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Floating particles */
+    .particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .particle {
+      position: absolute;
+      bottom: -10px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: particleFloat linear infinite;
+    }
+
+    .particle:nth-child(1)  { left: 10%; width: 3px; height: 3px; animation-duration: 14s; animation-delay: 0s; }
+    .particle:nth-child(2)  { left: 25%; width: 2px; height: 2px; animation-duration: 18s; animation-delay: 3s; }
+    .particle:nth-child(3)  { left: 40%; width: 4px; height: 4px; animation-duration: 12s; animation-delay: 6s; }
+    .particle:nth-child(4)  { left: 60%; width: 2px; height: 2px; animation-duration: 20s; animation-delay: 1s; }
+    .particle:nth-child(5)  { left: 75%; width: 3px; height: 3px; animation-duration: 16s; animation-delay: 4s; }
+    .particle:nth-child(6)  { left: 88%; width: 2px; height: 2px; animation-duration: 22s; animation-delay: 8s; }
+
+    /* Background radial glow */
+    .bg-glow {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 80% 80%, rgba(201,168,76,0.04) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      width: min(520px, 92vw);
+      background: var(--card-bg);
+      border: 1px solid rgba(201,168,76,0.18);
+      border-radius: 24px;
+      padding: 52px 44px 44px;
+      text-align: center;
+      animation: fadeInUp 0.8s ease both;
+      box-shadow:
+        0 0 0 1px rgba(201,168,76,0.06),
+        0 8px 32px rgba(0,0,0,0.6),
+        0 0 80px rgba(201,168,76,0.05);
+    }
+
+    /* Top accent line */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      border-radius: 0 0 4px 4px;
+      animation: lineExpand 1.2s ease 0.3s both;
+    }
+
+    /* Avatar */
+    .avatar-wrap {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
+      background-size: 200% 200%;
+      animation: gradientShift 4s ease infinite, fadeInUp 0.8s ease 0.1s both;
+      margin-bottom: 24px;
+      box-shadow: 0 0 30px rgba(201,168,76,0.3);
+      flex-shrink: 0;
+    }
+
+    .avatar-initials {
+      font-size: 28px;
+      font-weight: 700;
+      color: #0a0a0a;
+      letter-spacing: 1px;
+      user-select: none;
+    }
+
+    /* Name */
+    .name {
+      font-size: clamp(1.75rem, 5vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.15;
+      background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-dark) 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation:
+        gradientShift 4s ease infinite,
+        glowPulse 3s ease-in-out infinite,
+        fadeInUp 0.8s ease 0.2s both;
+      margin-bottom: 4px;
+    }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 18px auto;
+      animation: fadeInUp 0.8s ease 0.3s both;
+    }
+
+    .divider-line {
+      height: 1px;
+      width: 50px;
+      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.4));
+    }
+
+    .divider-line:last-child {
+      transform: scaleX(-1);
+    }
+
+    .divider-diamond {
+      width: 6px;
+      height: 6px;
+      background: var(--gold);
+      transform: rotate(45deg);
+      box-shadow: 0 0 8px var(--gold);
+    }
+
+    /* Specialization */
+    .spec {
+      font-size: clamp(0.8rem, 2.5vw, 0.92rem);
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.85;
+      animation: fadeInUp 0.8s ease 0.35s both;
+      margin-bottom: 6px;
+    }
+
+    .spec-sub {
+      font-size: clamp(0.75rem, 2.2vw, 0.82rem);
+      color: var(--muted);
+      letter-spacing: 1px;
+      animation: fadeInUp 0.8s ease 0.4s both;
+    }
+
+    /* Socials */
+    .socials {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin: 32px 0 28px;
+      animation: fadeInUp 0.8s ease 0.5s both;
+    }
+
+    .social-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      border: 1px solid rgba(201,168,76,0.2);
+      background: rgba(201,168,76,0.04);
+      color: var(--gold);
+      text-decoration: none;
+      transition:
+        transform 0.25s ease,
+        background 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+    }
+
+    .social-link:hover {
+      transform: translateY(-5px) scale(1.08);
+      background: rgba(201,168,76,0.12);
+      border-color: rgba(201,168,76,0.6);
+      box-shadow: 0 8px 24px rgba(201,168,76,0.2);
+    }
+
+    .social-link svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    /* Label under icon */
+    .social-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .social-label {
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+    }
+
+    /* CTA Button */
+    .cta {
+      display: inline-block;
+      padding: 15px 44px;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+      color: #0a0a0a;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
+      background-size: 200% auto;
+      border: none;
+      cursor: pointer;
+      transition: background-position 0.4s ease, transform 0.2s ease, box-shadow 0.2s ease;
+      animation:
+        fadeInUp 0.8s ease 0.6s both,
+        buttonPulse 2.5s ease-in-out 1.5s infinite;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .cta:hover {
+      background-position: right center;
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(201,168,76,0.45);
+      animation: none;
+    }
+
+    .cta:hover::after {
+      opacity: 1;
+    }
+
+    .cta:active {
+      transform: translateY(0);
+    }
+
+    /* Footer tag */
+    .tag {
+      margin-top: 32px;
+      font-size: 0.72rem;
+      color: rgba(136,136,136,0.5);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      animation: fadeInUp 0.8s ease 0.7s both;
+    }
+
+    /* Mobile */
+    @media (max-width: 480px) {
+      .card {
+        padding: 40px 28px 36px;
+        border-radius: 20px;
+      }
+
+      .avatar-wrap {
+        width: 76px;
+        height: 76px;
+      }
+
+      .social-link {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+      }
+
+      .cta {
+        padding: 14px 36px;
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-glow"></div>
+
+  <div class="particles">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+
+  <div class="card">
+
+    <div class="avatar-wrap">
+      <span class="avatar-initials">НВ</span>
+    </div>
+
+    <h1 class="name">Наталья&nbsp;Воробьева</h1>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-diamond"></div>
+      <div class="divider-line"></div>
+    </div>
+
+    <p class="spec">Инвестброкер</p>
+    <p class="spec-sub">Коммерческая недвижимость</p>
+
+    <div class="socials">
+
+      <!-- Telegram -->
+      <div class="social-wrap">
+        <a class="social-link" href="https://t.me/NataliaVorob" target="_blank" rel="noopener" aria-label="Telegram">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M11.944 0A12 12 0 1 0 24 12 12.013 12.013 0 0 0 11.944 0Zm3.175 7.77-1.83 8.63c-.134.6-.49.745-.993.463l-2.74-2.018-1.323 1.274a.69.69 0 0 1-.553.27l.197-2.793 5.088-4.597c.22-.197-.049-.306-.342-.109L6.43 13.24l-2.7-.843c-.586-.183-.6-.586.123-.868l10.544-4.065c.489-.177.917.109.722.306Z"/>
+          </svg>
+        </a>
+        <span class="social-label">Telegram</span>
+      </div>
+
+      <!-- WhatsApp -->
+      <div class="social-wrap">
+        <a class="social-link" href="https://wa.me/" target="_blank" rel="noopener" aria-label="WhatsApp">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+          </svg>
+        </a>
+        <span class="social-label">WhatsApp</span>
+      </div>
+
+      <!-- Instagram -->
+      <div class="social-wrap">
+        <a class="social-link" href="#" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069ZM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0Zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324ZM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881Z"/>
+          </svg>
+        </a>
+        <span class="social-label">Instagram</span>
+      </div>
+
+      <!-- Email -->
+      <div class="social-wrap">
+        <a class="social-link" href="mailto:natavorobievaii9@gmail.com" aria-label="Email">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2Zm0 4-8 5-8-5V6l8 5 8-5v2Z"/>
+          </svg>
+        </a>
+        <span class="social-label">Email</span>
+      </div>
+
+    </div>
+
+    <a class="cta" href="https://t.me/NataliaVorob" target="_blank" rel="noopener">
+      ✦ Написать мне
+    </a>
+
+    <p class="tag">Инвестиции в коммерческую недвижимость</p>
+
+  </div>
+
+</body>
+</html>
